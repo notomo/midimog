@@ -15,9 +15,7 @@ export async function createMidiMotionGraphics(
 
   const scene = renderer.getScene();
   const visualizers = [createGeometryVisualizer(scene)];
-
-  const midiInput = await createMidiInput();
-  midiInput.onMessage((message: MidiMessage) => {
+  const midiInput = await createMidiInput((message: MidiMessage) => {
     for (const visualizer of visualizers) {
       visualizer.onMidiMessage(message);
     }
@@ -47,10 +45,7 @@ export async function createMidiMotionGraphics(
       for (const visualizer of visualizers) {
         visualizer.dispose();
       }
-
-      if (midiInput) {
-        midiInput.dispose();
-      }
+      midiInput.dispose();
       renderer.dispose();
     },
   };
