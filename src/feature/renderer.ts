@@ -9,7 +9,6 @@ import {
 import { WebGPURenderer } from "three/webgpu";
 
 export interface RendererInstance {
-  init(): Promise<void>;
   addToScene(object: Object3D): void;
   removeFromScene(object: Object3D): void;
   render(): void;
@@ -56,29 +55,27 @@ export function createWebGPURenderer(
     state.renderer.setSize(width, height);
   }
 
+  // Setup renderer
+  state.renderer.setSize(window.innerWidth, window.innerHeight);
+  state.renderer.setPixelRatio(window.devicePixelRatio);
+  state.renderer.setClearColor(0x000000, 0);
+
+  // Setup camera
+  state.camera.position.z = 5;
+
+  // Setup lights
+  const ambientLight = new AmbientLight(0x404040, 0.6);
+  state.scene.add(ambientLight);
+
+  const directionalLight = new DirectionalLight(0xffffff, 0.8);
+  directionalLight.position.set(10, 10, 5);
+  directionalLight.castShadow = true;
+  state.scene.add(directionalLight);
+
+  handleResize();
+  window.addEventListener("resize", handleResize);
+
   return {
-    async init(): Promise<void> {
-      // Setup renderer (WebGL renderer doesn't need async init)
-      state.renderer.setSize(window.innerWidth, window.innerHeight);
-      state.renderer.setPixelRatio(window.devicePixelRatio);
-      state.renderer.setClearColor(0x000000, 0);
-
-      // Setup camera
-      state.camera.position.z = 5;
-
-      // Setup lights
-      const ambientLight = new AmbientLight(0x404040, 0.6);
-      state.scene.add(ambientLight);
-
-      const directionalLight = new DirectionalLight(0xffffff, 0.8);
-      directionalLight.position.set(10, 10, 5);
-      directionalLight.castShadow = true;
-      state.scene.add(directionalLight);
-
-      handleResize();
-      window.addEventListener("resize", handleResize);
-    },
-
     addToScene(object: Object3D): void {
       state.scene.add(object);
     },

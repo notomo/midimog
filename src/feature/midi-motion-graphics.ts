@@ -11,7 +11,6 @@ export async function createMidiMotionGraphics(
   canvas: HTMLCanvasElement,
 ): Promise<MidiMotionGraphicsInstance> {
   const renderer = createWebGPURenderer(canvas);
-  await renderer.init();
 
   const scene = renderer.getScene();
   const visualizers = [createGeometryVisualizer(scene)];
