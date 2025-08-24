@@ -6,7 +6,7 @@ import { createWebGPURenderer } from "./renderer";
 export async function createMidiMotionGraphics(canvas: HTMLCanvasElement) {
   const renderer = await createWebGPURenderer(canvas);
 
-  const scene = renderer.getScene();
+  const scene = renderer.scene;
   const visualizers = [createGeometryVisualizer(scene)];
   const midiInput = await createMidiInput((message: MidiMessage) => {
     for (const visualizer of visualizers) {

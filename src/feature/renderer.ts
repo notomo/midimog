@@ -1,25 +1,12 @@
 import {
   AmbientLight,
-  type Camera,
   DirectionalLight,
-  type Object3D,
   PerspectiveCamera,
   Scene,
 } from "three";
 import { WebGPURenderer } from "three/webgpu";
 
-export interface RendererInstance {
-  addToScene(object: Object3D): void;
-  removeFromScene(object: Object3D): void;
-  render(): Promise<void>;
-  getScene(): Scene;
-  getCamera(): Camera;
-  dispose(): void;
-}
-
-export async function createWebGPURenderer(
-  canvas: HTMLCanvasElement,
-): Promise<RendererInstance> {
+export async function createWebGPURenderer(canvas: HTMLCanvasElement) {
   const renderer = new WebGPURenderer({
     canvas,
     antialias: true,
@@ -66,24 +53,11 @@ export async function createWebGPURenderer(
   window.addEventListener("resize", handleResize);
 
   return {
-    addToScene(object: Object3D): void {
-      scene.add(object);
-    },
-
-    removeFromScene(object: Object3D): void {
-      scene.remove(object);
-    },
+    scene,
+    camera,
 
     async render(): Promise<void> {
       await renderer.renderAsync(scene, camera);
-    },
-
-    getScene(): Scene {
-      return scene;
-    },
-
-    getCamera(): Camera {
-      return camera;
     },
 
     dispose(): void {
