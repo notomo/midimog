@@ -9,18 +9,9 @@ import {
 import type { MidiMessage } from "../lib/midi-input";
 import type { Visualizer } from "./visualizer";
 
-interface GeometryVisualizerState {
-  scene: Scene;
-  cubes: Mesh[];
-  maxCubes: number;
-}
-
 export function createGeometryVisualizer(scene: Scene): Visualizer {
-  const state: GeometryVisualizerState = {
-    scene,
-    cubes: [],
-    maxCubes: 20,
-  };
+  const cubes: Mesh[] = [];
+  const maxCubes = 20;
 
   function createCube(note: number, velocity: number): void {
     const geometry = new BoxGeometry(0.5, 0.5, 0.5);
@@ -42,13 +33,13 @@ export function createGeometryVisualizer(scene: Scene): Visualizer {
 
     cube.scale.setScalar(intensity);
 
-    state.scene.add(cube);
-    state.cubes.push(cube);
+    scene.add(cube);
+    cubes.push(cube);
 
-    if (state.cubes.length > state.maxCubes) {
-      const oldCube = state.cubes.shift();
+    if (cubes.length > maxCubes) {
+      const oldCube = cubes.shift();
       if (oldCube) {
-        state.scene.remove(oldCube);
+        scene.remove(oldCube);
         oldCube.geometry.dispose();
         (oldCube.material as Material).dispose();
       }
@@ -63,7 +54,7 @@ export function createGeometryVisualizer(scene: Scene): Visualizer {
     },
 
     update(deltaTime: number): void {
-      for (const [index, cube] of state.cubes.entries()) {
+      for (const [index, cube] of cubes.entries()) {
         cube.rotation.x += deltaTime * (index + 1) * 0.01;
         cube.rotation.y += deltaTime * (index + 1) * 0.01;
         cube.position.y += Math.sin(Date.now() * 0.001 + index) * 0.01;
@@ -74,12 +65,12 @@ export function createGeometryVisualizer(scene: Scene): Visualizer {
     },
 
     dispose(): void {
-      for (const cube of state.cubes) {
-        state.scene.remove(cube);
+      for (const cube of cubes) {
+        scene.remove(cube);
         cube.geometry.dispose();
         (cube.material as Material).dispose();
       }
-      state.cubes.length = 0;
+      cubes.length = 0;
     },
   };
 }
