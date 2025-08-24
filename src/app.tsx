@@ -11,15 +11,18 @@ export function App() {
 
     let disposed = false;
 
-    createMidiMotionGraphics(canvasRef.current).then((midiMotionGraphics) => {
-      if (disposed) {
-        midiMotionGraphics.dispose();
-        return;
-      }
+    createMidiMotionGraphics(canvasRef.current)
+      .then((midiMotionGraphics) => {
+        if (disposed) {
+          midiMotionGraphics.dispose();
+          return;
+        }
 
-      midiMotionGraphicsRef.current = midiMotionGraphics;
-      midiMotionGraphics.init();
-    });
+        midiMotionGraphicsRef.current = midiMotionGraphics;
+      })
+      .catch((error) => {
+        console.error("Failed to initialize MIDI Motion Graphics:", error);
+      });
 
     return () => {
       disposed = true;
