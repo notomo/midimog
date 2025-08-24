@@ -1,34 +1,25 @@
 import { useEffect, useRef } from "react";
-import type { MidiMotionGraphicsInstance } from "./feature/midi-motion-graphics";
 import { createMidiMotionGraphics } from "./feature/midi-motion-graphics";
 
 export function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const midiMotionGraphicsRef = useRef<MidiMotionGraphicsInstance | null>(null);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current) {
+      return;
+    }
 
-    let disposed = false;
-
+    let dispose: (() => void) | null = null;
     createMidiMotionGraphics(canvasRef.current)
-      .then((midiMotionGraphics) => {
-        if (disposed) {
-          midiMotionGraphics.dispose();
-          return;
-        }
-
-        midiMotionGraphicsRef.current = midiMotionGraphics;
+      .then((x) => {
+        dispose = x;
       })
       .catch((error) => {
         console.error("Failed to initialize MIDI Motion Graphics:", error);
       });
 
     return () => {
-      disposed = true;
-      if (midiMotionGraphicsRef.current) {
-        midiMotionGraphicsRef.current.dispose();
-      }
+      dispose?.();
     };
   }, []);
 

@@ -3,13 +3,7 @@ import { createMidiInput } from "../lib/midi-input";
 import { createGeometryVisualizer } from "./geometry-visualizer";
 import { createWebGPURenderer } from "./renderer";
 
-export interface MidiMotionGraphicsInstance {
-  dispose(): void;
-}
-
-export async function createMidiMotionGraphics(
-  canvas: HTMLCanvasElement,
-): Promise<MidiMotionGraphicsInstance> {
+export async function createMidiMotionGraphics(canvas: HTMLCanvasElement) {
   const renderer = await createWebGPURenderer(canvas);
 
   const scene = renderer.getScene();
@@ -35,17 +29,16 @@ export async function createMidiMotionGraphics(
   };
   animationId = requestAnimationFrame(animate);
 
-  return {
-    dispose(): void {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
+  const dispose = () => {
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+    }
 
-      for (const visualizer of visualizers) {
-        visualizer.dispose();
-      }
-      midiInput.dispose();
-      renderer.dispose();
-    },
+    for (const visualizer of visualizers) {
+      visualizer.dispose();
+    }
+    midiInput.dispose();
+    renderer.dispose();
   };
+  return dispose;
 }
