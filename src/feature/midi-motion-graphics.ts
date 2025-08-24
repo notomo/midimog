@@ -10,7 +10,7 @@ export interface MidiMotionGraphicsInstance {
 export async function createMidiMotionGraphics(
   canvas: HTMLCanvasElement,
 ): Promise<MidiMotionGraphicsInstance> {
-  const renderer = createWebGPURenderer(canvas);
+  const renderer = await createWebGPURenderer(canvas);
 
   const scene = renderer.getScene();
   const visualizers = [createGeometryVisualizer(scene)];
@@ -22,7 +22,7 @@ export async function createMidiMotionGraphics(
 
   let animationId: number | null = null;
   let lastTime = 0;
-  const animate = (currentTime: number) => {
+  const animate = async (currentTime: number) => {
     const deltaTime = (currentTime - lastTime) / 1000;
     lastTime = currentTime;
 
@@ -30,7 +30,7 @@ export async function createMidiMotionGraphics(
       visualizer.update(deltaTime);
     }
 
-    renderer.render();
+    await renderer.render();
     animationId = requestAnimationFrame(animate);
   };
   animationId = requestAnimationFrame(animate);

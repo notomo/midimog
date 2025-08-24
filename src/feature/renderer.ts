@@ -11,7 +11,7 @@ import { WebGPURenderer } from "three/webgpu";
 export interface RendererInstance {
   addToScene(object: Object3D): void;
   removeFromScene(object: Object3D): void;
-  render(): void;
+  render(): Promise<void>;
   getScene(): Scene;
   getCamera(): Camera;
   dispose(): void;
@@ -23,14 +23,16 @@ interface RendererState {
   camera: PerspectiveCamera;
 }
 
-export function createWebGPURenderer(
+export async function createWebGPURenderer(
   canvas: HTMLCanvasElement,
-): RendererInstance {
+): Promise<RendererInstance> {
   const renderer = new WebGPURenderer({
     canvas,
     antialias: true,
     alpha: true,
   });
+
+  await renderer.init();
 
   const scene = new Scene();
   const camera = new PerspectiveCamera(
@@ -84,8 +86,8 @@ export function createWebGPURenderer(
       state.scene.remove(object);
     },
 
-    render(): void {
-      state.renderer.render(state.scene, state.camera);
+    async render(): Promise<void> {
+      await state.renderer.renderAsync(state.scene, state.camera);
     },
 
     getScene(): Scene {
