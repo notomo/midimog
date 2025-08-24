@@ -46,7 +46,7 @@ export async function createMidiInput(handler: (message: MidiMessage) => void) {
     throw new Error("Web MIDI API is not supported in this browser");
   }
 
-  const access = await navigator.requestMIDIAccess();
+  const access = await navigator.requestMIDIAccess({ sysex: false });
   for (const input of access.inputs.values()) {
     input.onmidimessage = (event) => {
       if (!event.data) {
