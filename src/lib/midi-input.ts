@@ -41,13 +41,21 @@ function parseMessage(data: Uint8Array): MidiMessage | null {
   }
 }
 
-export async function createMidiInput(handler: (message: MidiMessage) => void) {
+export async function getMidiAccess() {
   if (!navigator.requestMIDIAccess) {
-    throw new Error("Web MIDI API is not supported in this browser");
+    return null;
   }
+  return await navigator.requestMIDIAccess({ sysex: false });
+}
 
-  const access = await navigator.requestMIDIAccess({ sysex: false });
-  for (const input of access.inputs.values()) {
+export function createMidiInput({
+  midiAccess,
+  handler,
+}: {
+  midiAccess: MIDIAccess;
+  handler: (message: MidiMessage) => void;
+}) {
+  for (const input of midiAccess.inputs.values()) {
     input.onmidimessage = (event) => {
       if (!event.data) {
         return;
@@ -64,7 +72,7 @@ export async function createMidiInput(handler: (message: MidiMessage) => void) {
 
   return {
     dispose(): void {
-      for (const input of access.inputs.values()) {
+      for (const input of midiAccess.inputs.values()) {
         input.onmidimessage = null;
       }
     },

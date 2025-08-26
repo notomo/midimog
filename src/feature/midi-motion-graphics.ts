@@ -1,18 +1,12 @@
 import type { MidiMessage } from "../lib/midi-input";
-import { createMidiInput } from "../lib/midi-input";
 import { createGeometryVisualizer } from "./geometry-visualizer";
 import { createWebGPURenderer } from "./renderer";
 
-export async function createMidiMotionGraphics(canvas: HTMLCanvasElement) {
+export async function createGraphics(canvas: HTMLCanvasElement) {
   const renderer = await createWebGPURenderer(canvas);
 
   const scene = renderer.scene;
   const visualizers = [createGeometryVisualizer(scene)];
-  const midiInput = await createMidiInput((message: MidiMessage) => {
-    for (const visualizer of visualizers) {
-      visualizer.onMidiMessage(message);
-    }
-  });
 
   let animationId: number | null = null;
   let lastTime = 0;
@@ -29,16 +23,21 @@ export async function createMidiMotionGraphics(canvas: HTMLCanvasElement) {
   };
   animationId = requestAnimationFrame(animate);
 
-  const dispose = () => {
-    if (animationId) {
-      cancelAnimationFrame(animationId);
-    }
+  return {
+    onMidiMessage: (message: MidiMessage) => {
+      for (const visualizer of visualizers) {
+        visualizer.onMidiMessage(message);
+      }
+    },
+    dispose: () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
 
-    for (const visualizer of visualizers) {
-      visualizer.dispose();
-    }
-    midiInput.dispose();
-    renderer.dispose();
+      for (const visualizer of visualizers) {
+        visualizer.dispose();
+      }
+      renderer.dispose();
+    },
   };
-  return dispose;
 }
