@@ -78,3 +78,45 @@ export function createMidiInput({
     },
   };
 }
+
+export function createSelectableMidiInput({
+  handler,
+}: {
+  handler: (message: MidiMessage) => void;
+}) {
+  let currentInput: MIDIInput | null = null;
+
+  const setSelectedInput = (input: MIDIInput | null) => {
+    // Clear previous input handler
+    if (currentInput) {
+      currentInput.onmidimessage = null;
+    }
+
+    currentInput = input;
+
+    // Set new input handler
+    if (currentInput) {
+      currentInput.onmidimessage = (event) => {
+        if (!event.data) {
+          return;
+        }
+
+        const message = parseMessage(event.data);
+        if (!message) {
+          return;
+        }
+
+        handler(message);
+      };
+    }
+  };
+
+  return {
+    setSelectedInput,
+    dispose(): void {
+      if (currentInput) {
+        currentInput.onmidimessage = null;
+      }
+    },
+  };
+}

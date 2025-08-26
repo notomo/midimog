@@ -1,9 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { MidiInputSelector } from "./components/midi-input-selector";
 import { createGraphics } from "./feature/midi-motion-graphics";
-import { createMidiInput, getMidiAccess } from "./lib/midi-input";
+import { createSelectableMidiInput, getMidiAccess } from "./lib/midi-input";
 
 export function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [midiAccess, setMidiAccess] = useState<MIDIAccess | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -13,14 +15,15 @@ export function App() {
 
     let dispose: (() => void) | null = null;
     (async () => {
-      const midiAccess = await getMidiAccess();
-      if (midiAccess === null) {
+      const access = await getMidiAccess();
+      if (access === null) {
         return;
       }
 
+      setMidiAccess(access);
+
       const graphics = await createGraphics(canvas);
-      const midiInput = createMidiInput({
-        midiAccess,
+      const midiInput = createSelectableMidiInput({
         handler: graphics.onMidiMessage,
       });
 
@@ -28,6 +31,8 @@ export function App() {
         graphics.dispose();
         midiInput.dispose();
       };
+
+      setSelectedInputRef.current = midiInput.setSelectedInput;
     })();
 
     return () => {
@@ -35,9 +40,25 @@ export function App() {
     };
   }, []);
 
+  const setSelectedInputRef = useRef<
+    ((input: MIDIInput | null) => void) | null
+  >(null);
+
+  const handleInputChange = (input: MIDIInput | null) => {
+    if (setSelectedInputRef.current) {
+      setSelectedInputRef.current(input);
+    }
+  };
+
   return (
-    <div className={"h-screen w-screen bg-black"}>
+    <div className={"relative h-screen w-screen bg-black"}>
       <canvas ref={canvasRef} className={"h-full w-full"} />
+      {midiAccess && (
+        <MidiInputSelector
+          midiAccess={midiAccess}
+          onInputChange={handleInputChange}
+        />
+      )}
     </div>
   );
 }
