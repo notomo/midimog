@@ -52,3 +52,6 @@ The application follows a modular architecture with clear separation of concerns
 - React 19 with TypeScript
 - Three.js with WebGPU renderer and TypeScript definitions
 - Tailwind utilities: clsx and tailwind-merge
+
+## Task Guidelines
+- Always run `npm run check:all` at the end of tasks to verify code quality and type safety
