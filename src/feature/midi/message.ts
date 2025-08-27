@@ -7,7 +7,7 @@ export interface MidiMessage {
   channel: number;
 }
 
-function parseMessage(data: Uint8Array): MidiMessage | null {
+export function parseMessage(data: Uint8Array): MidiMessage | null {
   if (data.length < 2) return null;
 
   const status = data[0] ?? 0;
@@ -46,44 +46,4 @@ export async function getMidiAccess() {
     return null;
   }
   return await navigator.requestMIDIAccess({ sysex: false });
-}
-
-export function createSelectableMidiInput({
-  handler,
-}: {
-  handler: (message: MidiMessage) => void;
-}) {
-  let currentInput: MIDIInput | null = null;
-
-  const setSelectedInput = (input: MIDIInput | null) => {
-    if (currentInput) {
-      currentInput.onmidimessage = null;
-    }
-
-    currentInput = input;
-
-    if (currentInput) {
-      currentInput.onmidimessage = (event) => {
-        if (!event.data) {
-          return;
-        }
-
-        const message = parseMessage(event.data);
-        if (!message) {
-          return;
-        }
-
-        handler(message);
-      };
-    }
-  };
-
-  return {
-    setSelectedInput,
-    dispose(): void {
-      if (currentInput) {
-        currentInput.onmidimessage = null;
-      }
-    },
-  };
 }

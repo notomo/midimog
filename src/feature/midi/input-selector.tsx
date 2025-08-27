@@ -1,28 +1,55 @@
 import { useEffect, useState } from "react";
+import type { MidiMessage } from "./message";
+import { parseMessage } from "./message";
 
 export function MidiInputSelector({
   midiAccess,
-  onInputChange,
+  onMessage,
 }: {
   midiAccess: MIDIAccess;
-  onInputChange: (input: MIDIInput | null) => void;
+  onMessage: (message: MidiMessage) => void;
 }) {
   const [inputs, setInputs] = useState<MIDIInput[]>([]);
-  const [selectedInputId, setSelectedInputId] = useState<string>("");
+  const [selectedInputId, setSelectedInputId] = useState("");
+
+  useEffect(() => {
+    const selectedInput = inputs.find((input) => input.id === selectedInputId);
+    if (!selectedInput) {
+      return;
+    }
+
+    const listener = (event: MIDIMessageEvent) => {
+      if (!event.data) {
+        return;
+      }
+
+      const message = parseMessage(event.data);
+      if (!message) {
+        return;
+      }
+
+      onMessage(message);
+    };
+    selectedInput.addEventListener("midimessage", listener);
+    return () => {
+      selectedInput.removeEventListener("midimessage", listener);
+    };
+  }, [selectedInputId, inputs, onMessage]);
 
   useEffect(() => {
     const updateInputs = () => {
-      const inputArray = Array.from(midiAccess.inputs.values());
-      setInputs(inputArray);
+      const newInputs = Array.from(midiAccess.inputs.values());
+      setInputs(newInputs);
 
-      // Auto-select first input if available
-      if (inputArray.length > 0 && !selectedInputId) {
-        const firstInput = inputArray[0];
-        if (firstInput) {
-          setSelectedInputId(firstInput.id);
-          onInputChange(firstInput);
-        }
+      if (selectedInputId) {
+        return;
       }
+
+      const firstId = newInputs.at(0)?.id;
+      if (!firstId) {
+        return;
+      }
+      setSelectedInputId(firstId);
     };
 
     updateInputs();
@@ -31,17 +58,7 @@ export function MidiInputSelector({
     return () => {
       midiAccess.removeEventListener("statechange", updateInputs);
     };
-  }, [midiAccess, onInputChange, selectedInputId]);
-
-  const handleInputChange = (inputId: string) => {
-    setSelectedInputId(inputId);
-    if (inputId === "") {
-      onInputChange(null);
-    } else {
-      const input = inputs.find((input) => input.id === inputId);
-      onInputChange(input || null);
-    }
-  };
+  }, [midiAccess, selectedInputId]);
 
   if (inputs.length === 0) {
     return (
@@ -55,7 +72,7 @@ export function MidiInputSelector({
     <div className="absolute top-4 right-4 rounded bg-gray-800 px-3 py-2 text-white">
       <select
         value={selectedInputId}
-        onChange={(e) => handleInputChange(e.target.value)}
+        onChange={(e) => setSelectedInputId(e.target.value)}
         className="rounded border border-gray-600 bg-gray-700 px-2 py-1 text-sm text-white"
       >
         <option value="">Select MIDI Input</option>
