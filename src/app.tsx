@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MidiInputSelector } from "./components/midi-input-selector";
-import { createGraphics } from "./feature/midi-motion-graphics";
+import { createGraphics } from "./feature/grahphics";
 import { createSelectableMidiInput, getMidiAccess } from "./lib/midi-input";
 
 export function App() {
@@ -19,12 +19,11 @@ export function App() {
       if (access === null) {
         return;
       }
-
       setMidiAccess(access);
 
       const graphics = await createGraphics(canvas);
       const midiInput = createSelectableMidiInput({
-        handler: graphics.onMidiMessage,
+        handler: graphics.onMessage,
       });
 
       dispose = () => {

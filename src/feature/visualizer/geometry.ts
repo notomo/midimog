@@ -6,10 +6,9 @@ import {
   MeshLambertMaterial,
   type Scene,
 } from "three";
-import type { MidiMessage } from "../lib/midi-input";
-import type { Visualizer } from "./visualizer";
+import type { MidiMessage } from "../../lib/midi-input";
 
-export function createGeometryVisualizer(scene: Scene): Visualizer {
+export function createGeometryVisualizer(scene: Scene) {
   const cubes: Mesh[] = [];
   const maxCubes = 20;
 
@@ -47,7 +46,7 @@ export function createGeometryVisualizer(scene: Scene): Visualizer {
   }
 
   return {
-    onMidiMessage(message: MidiMessage): void {
+    onMessage(message: MidiMessage): void {
       if (message.type === "note_on" && message.note && message.velocity) {
         createCube(message.note, message.velocity);
       }

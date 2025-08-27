@@ -48,37 +48,6 @@ export async function getMidiAccess() {
   return await navigator.requestMIDIAccess({ sysex: false });
 }
 
-export function createMidiInput({
-  midiAccess,
-  handler,
-}: {
-  midiAccess: MIDIAccess;
-  handler: (message: MidiMessage) => void;
-}) {
-  for (const input of midiAccess.inputs.values()) {
-    input.onmidimessage = (event) => {
-      if (!event.data) {
-        return;
-      }
-
-      const message = parseMessage(event.data);
-      if (!message) {
-        return;
-      }
-
-      handler(message);
-    };
-  }
-
-  return {
-    dispose(): void {
-      for (const input of midiAccess.inputs.values()) {
-        input.onmidimessage = null;
-      }
-    },
-  };
-}
-
 export function createSelectableMidiInput({
   handler,
 }: {
@@ -87,14 +56,12 @@ export function createSelectableMidiInput({
   let currentInput: MIDIInput | null = null;
 
   const setSelectedInput = (input: MIDIInput | null) => {
-    // Clear previous input handler
     if (currentInput) {
       currentInput.onmidimessage = null;
     }
 
     currentInput = input;
 
-    // Set new input handler
     if (currentInput) {
       currentInput.onmidimessage = (event) => {
         if (!event.data) {
