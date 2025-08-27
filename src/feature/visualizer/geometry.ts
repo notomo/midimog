@@ -6,7 +6,7 @@ import {
   MeshLambertMaterial,
   type Scene,
 } from "three";
-import type { MidiMessage } from "../../lib/midi-input";
+import type { MidiMessage } from "../midi/message";
 
 export function createGeometryVisualizer(scene: Scene) {
   const cubes: Mesh[] = [];

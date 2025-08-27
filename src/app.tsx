@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { MidiInputSelector } from "./components/midi-input-selector";
 import { createGraphics } from "./feature/grahphics";
-import { createSelectableMidiInput, getMidiAccess } from "./lib/midi-input";
+import { MidiInputSelector } from "./feature/midi/input-selector";
+import {
+  createSelectableMidiInput,
+  getMidiAccess,
+} from "./feature/midi/message";
 
 export function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);

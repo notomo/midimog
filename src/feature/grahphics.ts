@@ -5,7 +5,7 @@ import {
   Scene,
 } from "three";
 import { WebGPURenderer } from "three/webgpu";
-import type { MidiMessage } from "../lib/midi-input";
+import type { MidiMessage } from "./midi/message";
 import { createGeometryVisualizer } from "./visualizer/geometry";
 
 export async function createGraphics(canvas: HTMLCanvasElement) {
