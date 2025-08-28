@@ -3,19 +3,17 @@ import {
   DirectionalLight,
   PerspectiveCamera,
   Scene,
+  WebGLRenderer,
 } from "three";
-import { WebGPURenderer } from "three/webgpu";
 import type { MidiMessage } from "./midi/message";
 import { createGeometryVisualizer } from "./visualizer/geometry";
 
-export async function createGraphics(canvas: HTMLCanvasElement) {
-  const renderer = new WebGPURenderer({
+export function createGraphics(canvas: HTMLCanvasElement) {
+  const renderer = new WebGLRenderer({
     canvas,
     antialias: true,
     alpha: true,
   });
-
-  await renderer.init();
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setClearColor(0x000000, 0);
@@ -52,13 +50,13 @@ export async function createGraphics(canvas: HTMLCanvasElement) {
   const visualizers = [createGeometryVisualizer(scene)];
   let animationId: number | null = null;
   let lastTime = 0;
-  const animate = async (currentTime: number) => {
+  const animate = (currentTime: number) => {
     const deltaTime = (currentTime - lastTime) / 1000;
     lastTime = currentTime;
     for (const visualizer of visualizers) {
       visualizer.update(deltaTime);
     }
-    await renderer.renderAsync(scene, camera);
+    renderer.render(scene, camera);
     animationId = requestAnimationFrame(animate);
   };
   animationId = requestAnimationFrame(animate);

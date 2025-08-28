@@ -16,15 +16,13 @@ export function App() {
       return;
     }
 
-    (async () => {
-      const graphics = await createGraphics(canvas);
-      setGraphics(graphics);
-    })();
+    const graphics = createGraphics(canvas);
+    setGraphics(graphics);
 
     return () => {
       graphics?.dispose();
     };
-  }, [graphics]);
+  }, []);
 
   return (
     <div className="h-screen w-screen bg-black">
