@@ -39,11 +39,15 @@ export function App() {
   return (
     <div className={"relative h-screen w-screen bg-black"}>
       <canvas ref={canvasRef} className={"h-full w-full"} />
-      {midiAccess && graphics && (
+      {midiAccess && graphics ? (
         <MidiInputSelector
           midiAccess={midiAccess}
           onMessage={graphics.onMessage}
         />
+      ) : (
+        <div className={"absolute top-4 left-4 text-white"}>
+          MIDI access is not available
+        </div>
       )}
     </div>
   );
