@@ -1,11 +1,11 @@
 import {
   BoxGeometry,
   Color,
-  type Material,
   Mesh,
   MeshLambertMaterial,
   type Scene,
 } from "three";
+import { disposeMeshes } from "../../lib/three/dispose";
 import type { MidiMessage } from "../midi/message";
 
 export function createGeometryVisualizer(scene: Scene) {
@@ -35,21 +35,22 @@ export function createGeometryVisualizer(scene: Scene) {
     scene.add(cube);
     cubes.push(cube);
 
-    if (cubes.length > maxCubes) {
-      const oldCube = cubes.shift();
-      if (oldCube) {
-        scene.remove(oldCube);
-        oldCube.geometry.dispose();
-        (oldCube.material as Material).dispose();
-      }
+    if (cubes.length <= maxCubes) {
+      return;
     }
+    const oldCube = cubes.shift();
+    if (!oldCube) {
+      return;
+    }
+    disposeMeshes({ scene, meshes: [oldCube] });
   }
 
   return {
     onMessage: (message: MidiMessage) => {
-      if (message.type === "note_on") {
-        createCube(message.note, message.velocity);
+      if (message.type !== "note_on") {
+        return;
       }
+      createCube(message.note, message.velocity);
     },
 
     update: (deltaTime: number) => {
@@ -64,11 +65,7 @@ export function createGeometryVisualizer(scene: Scene) {
     },
 
     dispose: () => {
-      for (const cube of cubes) {
-        scene.remove(cube);
-        cube.geometry.dispose();
-        (cube.material as Material).dispose();
-      }
+      disposeMeshes({ scene, meshes: cubes });
       cubes.length = 0;
     },
   };
