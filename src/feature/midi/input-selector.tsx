@@ -62,14 +62,14 @@ export function MidiInputSelector({
 
   if (inputs.length === 0) {
     return (
-      <div className="absolute top-4 right-4 rounded bg-gray-800 px-3 py-2 text-sm text-white">
+      <div className="rounded bg-gray-800 px-3 py-2 text-sm text-white">
         No MIDI inputs available
       </div>
     );
   }
 
   return (
-    <div className="absolute top-4 right-4 rounded bg-gray-800 px-3 py-2 text-white">
+    <div className="rounded bg-gray-800 px-3 py-2 text-white">
       <select
         value={selectedInputId}
         onChange={(e) => setSelectedInputId(e.target.value)}

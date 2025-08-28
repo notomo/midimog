@@ -37,18 +37,20 @@ export function App() {
   }, [graphics]);
 
   return (
-    <div className={"relative h-screen w-screen bg-black"}>
-      <canvas ref={canvasRef} className={"h-full w-full"} />
-      {midiAccess && graphics ? (
-        <MidiInputSelector
-          midiAccess={midiAccess}
-          onMessage={graphics.onMessage}
-        />
-      ) : (
-        <div className={"absolute top-4 left-4 text-white"}>
-          MIDI access is not available
+    <div className="flex h-screen w-screen flex-col bg-black">
+      <div className="pointer-events-none absolute inset-0 z-10 flex items-start justify-end p-4">
+        <div className="pointer-events-auto">
+          {midiAccess && graphics ? (
+            <MidiInputSelector
+              midiAccess={midiAccess}
+              onMessage={graphics.onMessage}
+            />
+          ) : (
+            <div className="text-white">MIDI access is not available</div>
+          )}
         </div>
-      )}
+      </div>
+      <canvas ref={canvasRef} className="h-full w-full flex-1" />
     </div>
   );
 }
