@@ -70,7 +70,7 @@ export async function createGraphics(canvas: HTMLCanvasElement) {
       }
     },
 
-    dispose(): void {
+    dispose: () => {
       if (animationId) {
         cancelAnimationFrame(animationId);
       }

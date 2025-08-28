@@ -46,13 +46,13 @@ export function createGeometryVisualizer(scene: Scene) {
   }
 
   return {
-    onMessage(message: MidiMessage): void {
-      if (message.type === "note_on" && message.note && message.velocity) {
+    onMessage: (message: MidiMessage) => {
+      if (message.type === "note_on") {
         createCube(message.note, message.velocity);
       }
     },
 
-    update(deltaTime: number): void {
+    update: (deltaTime: number) => {
       for (const [index, cube] of cubes.entries()) {
         cube.rotation.x += deltaTime * (index + 1) * 0.01;
         cube.rotation.y += deltaTime * (index + 1) * 0.01;
@@ -63,7 +63,7 @@ export function createGeometryVisualizer(scene: Scene) {
       }
     },
 
-    dispose(): void {
+    dispose: () => {
       for (const cube of cubes) {
         scene.remove(cube);
         cube.geometry.dispose();

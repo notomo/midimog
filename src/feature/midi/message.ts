@@ -1,14 +1,21 @@
-export interface MidiMessage {
-  type: "note_on" | "note_off" | "control_change";
-  note?: number;
-  velocity?: number;
-  control?: number;
-  value?: number;
-  channel: number;
-}
+export type MidiMessage =
+  | {
+      type: "note_on" | "note_off";
+      note: number;
+      velocity: number;
+      channel: number;
+    }
+  | {
+      type: "control_change";
+      control: number;
+      value: number;
+      channel: number;
+    };
 
 export function parseMessage(data: Uint8Array): MidiMessage | null {
-  if (data.length < 2) return null;
+  if (data.length < 3) {
+    return null;
+  }
 
   const status = data[0] ?? 0;
   const channel = status & 0x0f;
@@ -18,22 +25,22 @@ export function parseMessage(data: Uint8Array): MidiMessage | null {
     case 0x90: // Note on
       return {
         type: "note_on",
-        note: data[1],
-        velocity: data[2],
+        note: data[1] ?? 0,
+        velocity: data[2] ?? 0,
         channel,
       };
     case 0x80: // Note off
       return {
         type: "note_off",
-        note: data[1],
-        velocity: data[2],
+        note: data[1] ?? 0,
+        velocity: data[2] ?? 0,
         channel,
       };
     case 0xb0: // Control change
       return {
         type: "control_change",
-        control: data[1],
-        value: data[2],
+        control: data[1] ?? 0,
+        value: data[2] ?? 0,
         channel,
       };
     default:
