@@ -1,25 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { createGraphics } from "./feature/grahphics";
-import { MidiInputSelector } from "./feature/midi/input-selector";
-import { getMidiAccess, type MidiMessage } from "./feature/midi/message";
+import { MidiAccess } from "./feature/midi/access";
+import type { MidiMessage } from "./feature/midi/message";
 
 export function App() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [midiAccess, setMidiAccess] = useState<MIDIAccess | null>(null);
   const [graphics, setGraphics] = useState<{
     onMessage: (message: MidiMessage) => void;
     dispose: () => void;
   } | null>(null);
 
-  useEffect(() => {
-    (async () => {
-      const access = await getMidiAccess();
-      if (access !== null) {
-        setMidiAccess(access);
-      }
-    })();
-  }, []);
-
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -27,8 +17,8 @@ export function App() {
     }
 
     (async () => {
-      const graphicsObj = await createGraphics(canvas);
-      setGraphics(graphicsObj);
+      const graphics = await createGraphics(canvas);
+      setGraphics(graphics);
     })();
 
     return () => {
@@ -37,18 +27,9 @@ export function App() {
   }, [graphics]);
 
   return (
-    <div className="flex h-screen w-screen flex-col bg-black">
-      <div className="pointer-events-none absolute inset-0 z-10 flex items-start justify-end p-4">
-        <div className="pointer-events-auto">
-          {midiAccess && graphics ? (
-            <MidiInputSelector
-              midiAccess={midiAccess}
-              onMessage={graphics.onMessage}
-            />
-          ) : (
-            <div className="text-white">MIDI access is not available</div>
-          )}
-        </div>
+    <div className="h-screen w-screen bg-black">
+      <div className="pointer-events-none absolute inset-0 z-10 flex justify-end p-4">
+        {graphics ? <MidiAccess onMessage={graphics.onMessage} /> : null}
       </div>
       <canvas ref={canvasRef} className="h-full w-full flex-1" />
     </div>

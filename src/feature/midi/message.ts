@@ -47,10 +47,3 @@ export function parseMessage(data: Uint8Array): MidiMessage | null {
       return null;
   }
 }
-
-export async function getMidiAccess() {
-  if (!navigator.requestMIDIAccess) {
-    return null;
-  }
-  return await navigator.requestMIDIAccess({ sysex: false });
-}
