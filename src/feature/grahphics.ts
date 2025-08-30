@@ -7,6 +7,7 @@ import {
 } from "three";
 import type { MidiMessage } from "./midi/message";
 import { createGeometryVisualizer } from "./visualizer/geometry";
+import { createRippleVisualizer } from "./visualizer/ripple";
 
 export type Graphics = {
   onMessage: (message: MidiMessage) => void;
@@ -52,7 +53,10 @@ export function createGraphics(canvas: HTMLCanvasElement): Graphics {
   handleResize();
   window.addEventListener("resize", handleResize);
 
-  const visualizers = [createGeometryVisualizer(scene)];
+  const visualizers = [
+    createGeometryVisualizer(scene),
+    createRippleVisualizer(scene),
+  ];
   let animationId: number | null = null;
   let lastTime = 0;
   const animate = (currentTime: number) => {
