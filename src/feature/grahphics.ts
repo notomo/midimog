@@ -8,7 +8,12 @@ import {
 import type { MidiMessage } from "./midi/message";
 import { createGeometryVisualizer } from "./visualizer/geometry";
 
-export function createGraphics(canvas: HTMLCanvasElement) {
+export type Graphics = {
+  onMessage: (message: MidiMessage) => void;
+  dispose: () => void;
+};
+
+export function createGraphics(canvas: HTMLCanvasElement): Graphics {
   const renderer = new WebGLRenderer({
     canvas,
     antialias: true,

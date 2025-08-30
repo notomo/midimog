@@ -1,13 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { createGraphics } from "./feature/grahphics";
+import { createGraphics, type Graphics } from "./feature/grahphics";
 import { MidiAccess } from "./feature/midi/access";
-import type { MidiMessage } from "./feature/midi/message";
 
 export function App() {
-  const [graphics, setGraphics] = useState<{
-    onMessage: (message: MidiMessage) => void;
-    dispose: () => void;
-  } | null>(null);
+  const [graphics, setGraphics] = useState<Graphics | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
