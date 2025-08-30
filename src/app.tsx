@@ -6,6 +6,7 @@ export function App() {
   const [graphics, setGraphics] = useState<Graphics | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: HACK: to enable hot reloading
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -18,7 +19,7 @@ export function App() {
     return () => {
       graphics?.dispose();
     };
-  }, []);
+  }, [createGraphics]);
 
   return (
     <div className="h-screen w-screen bg-black">
