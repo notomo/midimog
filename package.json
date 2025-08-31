@@ -13,7 +13,8 @@
     "lint": "biome check .",
     "lint:fix": "biome check --fix .",
     "format": "biome format --write .",
-    "check:all": "npm run lint && npm run typecheck && npm run test"
+    "check:all": "npm run lint && npm run typecheck && npm run test",
+    "tunnel": "cloudflared tunnel --url localhost:5173"
   },
   "dependencies": {
     "react": "^19.1.1",
