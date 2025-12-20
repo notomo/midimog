@@ -17,8 +17,8 @@
     "tunnel": "cloudflared tunnel --url localhost:5173"
   },
   "dependencies": {
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "three": "^0.181.2",
     "@types/three": "^0.181.0",
     "clsx": "^2.1.1",
