@@ -35,6 +35,6 @@
     "tailwindcss": "^4.2.1",
     "@tailwindcss/postcss": "^4.2.1",
     "postcss": "^8.5.8",
-    "lefthook": "^2.1.2"
+    "lefthook": "^2.1.4"
   }
 }
