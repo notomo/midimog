@@ -34,5 +34,9 @@ updates:
           - react-dom
           - "@types/react"
           - "@types/react-dom"
+      vite:
+        patterns:
+          - vite
+          - "@vitejs/*"
     cooldown:
       default-days: 7
