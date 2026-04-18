@@ -34,7 +34,7 @@
     "@biomejs/biome": "2.4.10",
     "tailwindcss": "^4.2.2",
     "@tailwindcss/postcss": "^4.2.2",
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.9",
     "lefthook": "^2.1.4"
   }
 }
