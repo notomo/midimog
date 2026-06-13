@@ -30,7 +30,7 @@
     "@vitejs/plugin-react": "^6.0.2",
     "typescript": "^6.0.3",
     "vite": "^8.0.16",
-    "vitest": "^4.1.7",
+    "vitest": "^4.1.8",
     "@biomejs/biome": "2.4.16",
     "tailwindcss": "^4.3.0",
     "@tailwindcss/postcss": "^4.3.0",
